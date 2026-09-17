@@ -7,7 +7,7 @@
 
 An end-to-end **Supply Chain Business Intelligence and Analytics solution** built in **Microsoft Excel 2024**. This project demonstrates data cleaning and transformation via Power Query, analytical modeling, dynamic array calculations, custom KPI architecture, and an interactive executive BI dashboard.
 
-![Supply Chain Operations & Inventory Analytics Dashboard](Dashboard/dashboard.png)
+![Supply Chain Operations & Inventory Analytics Dashboard](Dashboard/Supply_Chain_Operations_Inventory_Analytics_Dashboard.png)
 
 ---
 
@@ -67,7 +67,8 @@ Supply chain teams manage multiple operational challenges across their distribut
 
 - **Dataset Name:** High-Dimensional Supply Chain Inventory Dataset
 - **Source:** Kaggle (Created by Ziya)
-- **Direct Source Documentation:** [Dataset Documentation](Dataset/dataset_source.md)
+- **Local Dataset File:** [`Dataset/supply_chain_dataset1.csv`](Dataset/supply_chain_dataset1.csv)
+- **Dataset Documentation & Kaggle Link:** [Dataset Documentation](Dataset/dataset_source.md)
 - **Time Period:** 01-Jan-2024 to 31-Dec-2024 (Full calendar year)
 - **Dataset Nature:** Simulated / synthetic dataset designed for analytics, demand modeling, and reporting. *(Note: Not sourced from real-world corporate or proprietary retail databases).*
 

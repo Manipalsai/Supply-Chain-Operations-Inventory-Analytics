@@ -68,4 +68,4 @@ This dataset is a simulated, synthetic supply chain dataset designed for invento
 
 ## How to Access the Data
 
-The raw data can be downloaded directly from the Kaggle link above or viewed in the `Raw_Data` worksheet of the project workbook: [`Excel/Supply_Chain_Operations_Inventory_Analytics.xlsx`](../Excel/Supply_Chain_Operations_Inventory_Analytics.xlsx).
+The raw data is included in this directory as [`supply_chain_dataset1.csv`](supply_chain_dataset1.csv), can be downloaded directly from the Kaggle link above, or viewed in the `Raw_Data` worksheet of the project workbook: [`Excel/Supply_Chain_Operations_Inventory_Analytics.xlsx`](../Excel/Supply_Chain_Operations_Inventory_Analytics.xlsx).
