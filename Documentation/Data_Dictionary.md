@@ -1,53 +1,52 @@
 # Data Dictionary
 
-This document outlines the complete schema, data types, field definitions, and business logic for both the raw and transformed datasets used in the **Supply Chain Operations & Inventory Analytics** project.
+This document details the schema, field types, descriptions, and calculation logic for the **Supply Chain Operations & Inventory Analytics** project.
 
 ---
 
 ## 1. Raw Dataset Schema (`Raw_Data`)
 
-The raw table contains **91,251 records** and **15 columns** covering daily operations throughout 2024.
+The raw dataset contains **91,251 records** and **15 columns** covering the period from 01-Jan-2024 to 31-Dec-2024.
 
-| Column Name | Data Type | Field Type | Example | Description & Business Context |
+| Column Name | Data Type | Field Type | Example | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| **`Date`** | Date | Original | `2024-01-01` | Transaction and recording date spanning from 01-Jan-2024 to 31-Dec-2024. |
-| **`SKU_ID`** | Text | Original | `SKU_1` | Unique identifier for 50 distinct Stock Keeping Units (`SKU_1` to `SKU_50`). |
-| **`Warehouse_ID`** | Text | Original | `WH_1` | Unique identifier for 5 fulfillment/distribution facilities (`WH_1` to `WH_5`). |
-| **`Supplier_ID`** | Text | Original | `SUP_1` | Unique identifier for 10 vendor partners (`SUP_1` to `SUP_10`). |
-| **`Region`** | Text | Original | `East` | Target geographic market segment (`North`, `South`, `East`, `West`). |
-| **`Units_Sold`** | Integer | Original | `25` | Number of physical units sold for the specific SKU, location, and date. |
-| **`Inventory_Level`** | Integer | Original | `480` | Current on-hand available inventory stock at the specified warehouse. |
-| **`Supplier_Lead_Time_Days`** | Integer | Original | `8` | Vendor delivery lead time required to fulfill an order (in days). |
-| **`Reorder_Point`** | Integer | Original | `350` | Predetermined threshold triggering automated replenishment when inventory falls below this level. |
-| **`Order_Quantity`** | Integer | Original | `200` | Batch replenishment quantity ordered from the supplier. |
-| **`Unit_Cost`** | Decimal ($) | Original | `$12.50` | Direct acquisition / manufacturing cost per unit paid to the supplier. |
-| **`Unit_Price`** | Decimal ($) | Original | `$18.99` | Retail selling price per unit billed to the customer. |
-| **`Promotion_Flag`** | Binary (0/1) | Original | `1` | Marketing flag: `1` indicates an active marketing/discount promotion, `0` indicates standard pricing. |
-| **`Stockout_Flag`** | Binary (0/1) | Original (Raw Only) | `0` | Raw dataset flag. *Note: Audited as constant 0 across all 91,251 records; excluded from analytical model to prevent misleading insights.* |
-| **`Demand_Forecast`** | Decimal | Original | `24.8` | Expected customer demand units projected by baseline predictive models. |
+| **`Date`** | Date | Original | `2024-01-01` | Transaction date spanning 01-Jan-2024 to 31-Dec-2024. |
+| **`SKU_ID`** | Text | Original | `SKU_1` | Identifier for 50 distinct Stock Keeping Units (`SKU_1` to `SKU_50`). |
+| **`Warehouse_ID`** | Text | Original | `WH_1` | Identifier for 5 distribution facilities (`WH_1` to `WH_5`). |
+| **`Supplier_ID`** | Text | Original | `SUP_1` | Identifier for 10 supplier partners (`SUP_1` to `SUP_10`). |
+| **`Region`** | Text | Original | `East` | Geographic market region (`North`, `South`, `East`, `West`). |
+| **`Units_Sold`** | Integer | Original | `25` | Number of units sold on the given date and location. |
+| **`Inventory_Level`** | Integer | Original | `480` | Available on-hand physical stock quantity. |
+| **`Supplier_Lead_Time_Days`** | Integer | Original | `8` | Supplier delivery lead time in days. |
+| **`Reorder_Point`** | Integer | Original | `350` | Inventory threshold triggering a replenishment order. |
+| **`Order_Quantity`** | Integer | Original | `200` | Replenishment quantity ordered from the supplier. |
+| **`Unit_Cost`** | Decimal | Original | `12.50` | Direct acquisition cost per unit (in currency units). |
+| **`Unit_Price`** | Decimal | Original | `18.99` | Selling price per unit (in currency units). |
+| **`Promotion_Flag`** | Binary (0/1) | Original | `1` | `1` = active promotion campaign; `0` = standard pricing. |
+| **`Stockout_Flag`** | Binary (0/1) | Original | `0` | *Audited as constant 0 across all rows; removed from cleaned output.* |
+| **`Demand_Forecast`** | Decimal | Original | `24.8` | Provided demand forecast units. |
 
 ---
 
 ## 2. Transformed & Calculated Fields (`Clean_Data` & Analytical Layer)
 
-Calculated during the Power Query ETL pipeline and analytical modeling layer to enable financial, operational, and forecast accuracy analysis.
+Created in Power Query and analytical sheets for financial, operational, and forecast evaluation.
 
-| Metric / Field Name | Data Type | Field Type | Calculation Formula / Business Logic | Purpose & Context |
+| Metric / Field Name | Data Type | Field Type | Formula / Business Logic | Description |
 | :--- | :--- | :--- | :--- | :--- |
-| **`Revenue`** | Currency ($) | Calculated (ETL) | `[Units_Sold] * [Unit_Price]` | Total gross monetary value generated from sales. |
-| **`Cost`** | Currency ($) | Calculated (ETL) | `[Units_Sold] * [Unit_Cost]` | Total Cost of Goods Sold (COGS). |
-| **`Gross_Profit`** | Currency ($) | Calculated (BI) | `[Revenue] - [Cost]` | Total gross margin generated before operating overhead. |
-| **`Profit_Margin`** | Percentage (%) | Calculated (BI) | `[Gross_Profit] / [Revenue]` | Profitability percentage realized per dollar of sales. |
-| **`Forecast_Variance`** | Decimal | Calculated (ETL) | `[Units_Sold] - [Demand_Forecast]` | Raw numerical difference between actual units sold and forecasted demand. |
-| **`Absolute_Forecast_Error`** | Decimal | Calculated (ETL) | `ABS([Forecast_Variance])` | Absolute variance used for unbiased error evaluation. |
-| **`Forecast_Accuracy`** | Percentage (%) | Calculated (ETL) | `IF([Units_Sold] = 0, 1, 1 - ([Absolute_Forecast_Error] / [Units_Sold]))` | Metric tracking forecast alignment relative to sales volume (bounded/handled for 0 sales). |
-| **`Stock_Coverage_Ratio`** | Decimal | Calculated (BI) | `[Inventory_Level] / [Reorder_Point]` | Buffer safety ratio; values < 1.0 indicate potential replenishment risk. |
+| **`Revenue`** | Decimal | Calculated (Power Query) | `Units_Sold × Unit_Price` | Total sales revenue in currency units. |
+| **`Cost`** | Decimal | Calculated (Power Query) | `Units_Sold × Unit_Cost` | Total cost in currency units. |
+| **`Gross_Profit`** | Decimal | Calculated (Excel) | `Revenue − Cost` | Gross profit in currency units. |
+| **`Profit_Margin`** | Percentage (%) | Calculated (Excel) | `Gross_Profit / Revenue` | Profit margin percentage. |
+| **`Forecast_Variance`** | Decimal | Calculated (Power Query) | `Units_Sold − Demand_Forecast` | Difference between actual sales and forecasted demand. |
+| **`Absolute_Forecast_Error`** | Decimal | Calculated (Power Query) | `ABS(Forecast_Variance)` | Absolute magnitude of forecast deviation. |
+| **`Forecast_Accuracy`** | Percentage (%) | Calculated (Power Query) | `1 − (Absolute_Forecast_Error / Units_Sold)` | Forecast accuracy percentage (with zero handling). |
 
 ---
 
-## 3. Data Integrity & Validation Rules Applied
+## 3. Data Integrity & Cleaning Summary
 
-1. **Completeness:** Every column was verified to contain 0 null / blank cells across all 91,251 records.
-2. **Uniqueness:** Deduplication checks confirmed 0 duplicate rows across composite keys (`Date`, `SKU_ID`, `Warehouse_ID`, `Supplier_ID`, `Region`).
-3. **Data Type Uniformity:** Date fields strictly formatted to `Date`, financial values formatted as `Currency ($)`, identifiers as `Text`, and quantities as `Integer`.
-4. **ETL Filter Rules:** `Stockout_Flag` was pruned during ingestion to avoid uninformative bias.
+1. **Completeness:** 0 missing cells across all 91,251 records.
+2. **Uniqueness:** 0 duplicate rows identified during data-quality checking.
+3. **Data Types:** Enforced explicit types for Date, Text, Integer, and Decimal columns.
+4. **Column Cleansing:** Removed `Stockout_Flag` because it contained only `0` values across the entire dataset.
